@@ -1,17 +1,25 @@
 import requests
 
-api_key = '30d4741c779ba94c470ca1f63045390a'
+def get_weather_data(api_key, user_input):
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={user_input}&units=imperial&APPID={api_key}"
+    return requests.get(url).json()
 
-user_input = input("Enter city: ")
+def display_weather_info(user_input, weather_data):
+    if weather_data['cod'] == '404':
+        print("No City Found")
+    else:
+        weather = weather_data['weather'][0]['main']
+        temp = round(weather_data['main']['temp'])
 
-weather_data = requests.get(
-    f"https://api.openweathermap.org/data/2.5/weather?q={user_input}&units=imperial&APPID={api_key}")
+        print(f"The weather in {user_input} is: {weather}")
+        print(f"The temperature in {user_input} is: {temp}ºF")
 
-if weather_data.json()['cod'] == '404':
-    print("No City Found")
-else:
-    weather = weather_data.json()['weather'][0]['main']
-    temp = round(weather_data.json()['main']['temp'])
+def main():
+    api_key = '30d4741c779ba94c470ca1f63045390a'
+    user_input = input("Enter city: ")
 
-    print(f"The weather in {user_input} is: {weather}")
-    print(f"The temperature in {user_input} is: {temp}ºF")
+    weather_data = get_weather_data(api_key, user_input)
+    display_weather_info(user_input, weather_data)
+
+if __name__ == "__main__":
+    main()
